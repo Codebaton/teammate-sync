@@ -64,17 +64,17 @@
         {
           "@type": "Question",
           "name": "Is CodeBaton a cloud agent?",
-          "acceptedAnswer": { "@type": "Answer", "text": "No. CodeBaton is a peer-to-peer sync utility for local Claude Code instances. The AI is the Claude Code already running on each engineer's laptop; CodeBaton just connects them. No autonomous work, no cloud sandbox." }
+          "acceptedAnswer": { "@type": "Answer", "text": "No. The work is done by your teammate's own Claude Code, already running on their laptop. CodeBaton relays your question to their Claude and brings the answer back. No autonomous work, no cloud sandbox." }
         },
         {
           "@type": "Question",
           "name": "What about privacy and code safety?",
-          "acceptedAnswer": { "@type": "Answer", "text": "By default nothing is shared. The /connect command opts one session in, to specific people you name, and only members of your GitHub org can connect. Running /disconnect — or simply ending the session — wipes the shared copy immediately." }
+          "acceptedAnswer": { "@type": "Answer", "text": "By default nothing is shared. The /connect command opts one session in, to specific people you name, and only members of your GitHub org can connect. Your transcript never leaves your machine, so there is no copy elsewhere to leak. Running /disconnect, or just ending the session, revokes access right away." }
         },
         {
           "@type": "Question",
           "name": "Do you need any infrastructure to run CodeBaton?",
-          "acceptedAnswer": { "@type": "Answer", "text": "None. No AWS, no buckets, no servers. Sessions stay on your laptops; CodeBaton runs a thin sync layer in between. Your workspace is your existing GitHub org." }
+          "acceptedAnswer": { "@type": "Answer", "text": "You run none. We host a small broker that relays questions and answers between machines. It does not store your session transcripts; those stay on your laptop. It does keep short summaries of decisions people choose to save, so you can still ask when a teammate is offline. Your workspace is your existing GitHub org." }
         },
         {
           "@type": "Question",
@@ -619,18 +619,17 @@
                 
                 <div style="display: flex; gap: 1rem; margin-top: 1rem;">
                     <a href="#install" class="btn btn-primary">Install Now</a>
-                    <a href="mailto:om@turgon.ai?subject=CodeBaton beta" class="btn btn-outline">Request Beta Access</a>
                     <a href="https://github.com/codebaton/teammate-sync" class="btn btn-outline mono">View on GitHub</a>
                 </div>
             </div>
 
             <div class="hero-visual">
-                <div class="mono" style="margin-bottom: 1.5rem; padding: 0.5rem 1rem; background: var(--accent-dim); border: 1px solid var(--accent); border-radius: var(--radius-pill); font-size: 0.8rem; color: var(--text-primary); text-align: center;"><span style="color: var(--accent); font-weight: 600;">Sam</span> &amp; <span style="color: var(--accent); font-weight: 600;">Dario</span> — teammates in the same org, on the same project</div>
+                <div class="mono" style="margin-bottom: 1.5rem; padding: 0.5rem 1rem; background: var(--accent-dim); border: 1px solid var(--accent); border-radius: var(--radius-pill); font-size: 0.8rem; color: var(--text-primary); text-align: center;"><span style="color: var(--accent); font-weight: 600;">Sam</span> &amp; <span style="color: var(--accent); font-weight: 600;">Dario</span>, teammates in the same org, on the same project</div>
                 <div class="terminal-stack">
                     <div class="terminal mono">
                         <div class="terminal-header">
                             <div class="mac-dots"><div class="r"></div><div class="y"></div><div class="g"></div></div>
-                            <div class="terminal-title mono" style="font-size: 0.75rem">dario — claude-code</div>
+                            <div class="terminal-title mono" style="font-size: 0.75rem">dario · claude-code</div>
                         </div>
                         <div class="terminal-body">
                             <div class="t-row"><span class="t-prompt">❯</span><span class="t-cmd">/connect</span> <span class="t-arg">sam</span></div>
@@ -643,7 +642,7 @@
                     <div class="terminal mono">
                         <div class="terminal-header">
                             <div class="mac-dots"><div class="r"></div><div class="y"></div><div class="g"></div></div>
-                            <div class="terminal-title mono" style="font-size: 0.75rem">sam — claude-code</div>
+                            <div class="terminal-title mono" style="font-size: 0.75rem">sam · claude-code</div>
                         </div>
                         <div class="terminal-body">
                             <div class="t-row"><span class="t-prompt">❯</span><span class="t-cmd">/connect</span> <span class="t-arg">dario</span></div>
@@ -651,8 +650,8 @@
                             <div class="t-output t-highlight">dario accepted. You can now /ask the sessions they share with you.</div>
                             <div class="t-row" style="margin-top: 1rem;"><span class="t-prompt">❯</span><span class="t-cmd">/ask</span> <span class="t-arg">dario what library did you pick for pagination?</span></div>
                             <div class="t-output" style="color: #fff;">
-                                He went with <span class="t-highlight">cursor-based pagination</span> — "needed it to handle high-volume writes on the feed table."<br><br>
-                                <span class="t-cite">— @dario, live (feed-service)</span>
+                                He went with <span class="t-highlight">cursor-based pagination</span>, because it "needed to handle high-volume writes on the feed table."<br><br>
+                                <span class="t-cite">@dario · live (feed-service)</span>
                             </div>
                         </div>
                     </div>
@@ -664,7 +663,7 @@
         <section id="problem">
             <div class="badge muted mono" style="margin-bottom: 2rem;">01 / The Status Quo</div>
             <h2>The Sync Problem</h2>
-            <p class="lead" style="font-size: 1.5rem; color: #fff; margin-bottom: 1.5rem;">You and a teammate are both using Claude Code on the same project — on your own different laptops.</p>
+            <p class="lead" style="font-size: 1.5rem; color: #fff; margin-bottom: 1.5rem;">You and a teammate are both using Claude Code on the same project, on your own different laptops.</p>
             <p>You need to know what they decided about the database schema, which file they just touched, or why they picked one library over another. Today, you have two bad options:</p>
 
             <div class="grid-2">
@@ -685,7 +684,7 @@
                     <div class="terminal mono" style="margin-top: auto;">
                         <div class="terminal-body" style="padding: 1rem;">
                             <div class="t-output" style="padding-left: 0; color:#fff;"><b>Them:</b> here’s the whole thread 👇</div>
-                            <div class="t-output" style="padding-left: 0; opacity:0.65; margin-top:0.5rem;">you: how should we paginate the feed?<br>claude: offset is simplest, but…<br>you: just do offset<br>claude: ok — though under load you may see dupes…<br><span style="opacity:0.5">… 300+ more lines pasted …</span></div>
+                            <div class="t-output" style="padding-left: 0; opacity:0.65; margin-top:0.5rem;">you: how should we paginate the feed?<br>claude: offset is simplest, but…<br>you: just do offset<br>claude: ok, though under load you may see dupes…<br><span style="opacity:0.5">… 300+ more lines pasted …</span></div>
                             <div class="t-output" style="padding-left: 0; color: #ef4444; margin-top: 0.5rem;">Scroll it for ten minutes, or paste it into your own Claude until it chokes.</div>
                         </div>
                     </div>
@@ -718,12 +717,12 @@
                         <div class="terminal-title mono" style="font-size: 0.75rem">WITH CODEBATON</div>
                     </div>
                     <div class="terminal-body">
-                        <div class="t-row"><span class="t-prompt">❯</span><span class="t-cmd">/ask</span> <span class="t-arg">dario What is Dario seeing about the recursive trigger right now?</span></div>
+                        <div class="t-row"><span class="t-prompt">❯</span><span class="t-cmd">/ask</span> <span class="t-arg">dario what are you seeing on the recursive trigger right now?</span></div>
                         <div class="t-output" style="color: #fff; margin-top: 1rem;">
                             Dario is currently dealing with a recursive update on the <span class="t-highlight">AccountTrigger</span>.<br><br>
                             His Claude instance just generated this SOQL query to bypass it:<br>
                             <span style="color: #a855f7;">SELECT Id FROM Account WHERE LastModifiedDate &lt; :Trigger.new[0].LastModifiedDate</span><br><br>
-                            <span style="color: var(--text-secondary);">— @dario, live (sf-migration) · answered 94s ago. Never hit GitHub.</span>
+                            <span style="color: var(--text-secondary);">@dario · live (sf-migration) · answered 94s ago. Never hit GitHub.</span>
                         </div>
                     </div>
                 </div>
@@ -736,7 +735,7 @@
                 <div class="card highlight-border">
                     <h1 style="font-size: 3rem; color: var(--border-strong);">1</h1>
                     <h3 style="color: #fff;">Reasoning never reaches a commit.</h3>
-                    <p style="font-size: 0.875rem;">The dead-ends, the architectural debates with Claude, the rejected libraries—all lost.</p>
+                    <p style="font-size: 0.875rem;">The dead-ends, the architectural debates with Claude, the rejected libraries, all lost.</p>
                 </div>
                 <div class="card highlight-border">
                     <h1 style="font-size: 3rem; color: var(--border-strong);">2</h1>
@@ -779,8 +778,8 @@
 
                 <div class="card">
                     <div class="card-label">Option 2: Desktop App</div>
-                    <p style="color: #fff;">Download for Mac. Drag to Applications. Sign in.</p>
-                    <a href="https://github.com/codebaton/teammate-sync/releases/download/desktop-v0.6.33/CodeBaton-0.6.33-arm64.dmg" class="btn btn-outline" style="width: fit-content; margin-top: 0.5rem;">Download .dmg</a>
+                    <p style="color: #fff;">Download for Mac (Apple Silicon). Drag to Applications. Sign in.</p>
+                    <a href="https://github.com/codebaton/teammate-sync/releases/download/desktop-v0.6.33/CodeBaton-0.6.33-arm64.dmg" class="btn btn-outline" style="width: fit-content; margin-top: 0.5rem;">Download for Apple Silicon (.dmg)</a>
                 </div>
             </div>
 
@@ -800,21 +799,21 @@
                         <div class="step-number">2</div>
                         <div class="step-content">
                             <h3 style="color: #fff;">Start Daemon</h3>
-                            <p style="font-size: 0.875rem;">Runs silently in the background. Your sessions never leave your machine — nothing is uploaded.</p>
+                            <p style="font-size: 0.875rem;">Runs quietly in the background. Your full sessions stay on your machine. Your own Claude reads them there to answer. Only the question and the answer travel.</p>
                         </div>
                     </div>
                     <div class="step-item">
                         <div class="step-number">3</div>
                         <div class="step-content">
                             <h3 style="color: #fff;">Connect Teammate</h3>
-                            <p style="font-size: 0.875rem;">Type <code>/connect dario</code> — you both confirm once. No content syncs; it just unlocks asking each other.</p>
+                            <p style="font-size: 0.875rem;">Type <code>/connect dario</code>, you both confirm once. No content syncs; it just unlocks asking each other.</p>
                         </div>
                     </div>
                     <div class="step-item">
                         <div class="step-number">4</div>
                         <div class="step-content">
                             <h3 style="color: #fff;">Query Context</h3>
-                            <p style="font-size: 0.875rem;">Type <code>/ask sam &lt;question&gt;</code>, pick which shared session to ask, and their Claude answers — you get just the answer, cited.</p>
+                            <p style="font-size: 0.875rem;">Type <code>/ask sam &lt;question&gt;</code>, pick which shared session to ask, and their Claude answers. You get just the answer, cited.</p>
                         </div>
                     </div>
                 </div>
@@ -832,19 +831,27 @@
             <div class="grid-2" style="margin-top: 2rem;">
                 <div class="card">
                     <h3 style="color: #fff; font-size: 1.1rem;">Is this a cloud agent?</h3>
-                    <p style="font-size: 0.875rem;">No. It's a peer-to-peer sync utility for local Claude Code instances.</p>
+                    <p style="font-size: 0.875rem;">No. The work is done by your teammate's own Claude Code, already running on their laptop. CodeBaton just carries the question over and brings the answer back.</p>
                 </div>
                 <div class="card">
-                    <h3 style="color: #fff; font-size: 1.1rem;">What about privacy?</h3>
-                    <p style="font-size: 0.875rem;">Default, nothing is shared. <code>/connect</code> opts one session in, to specific people. <code>/disconnect</code> — or just ending the session — wipes the shared copy immediately.</p>
+                    <h3 style="color: #fff; font-size: 1.1rem;">Whose machine runs the answer?</h3>
+                    <p style="font-size: 0.875rem;">Theirs. When you ask, their Claude reads their local session and answers, on their machine, using their own Claude account. That is why sharing is off until they turn it on.</p>
                 </div>
                 <div class="card">
-                    <h3 style="color: #fff; font-size: 1.1rem;">Any infrastructure to run?</h3>
-                    <p style="font-size: 0.875rem;">None. No AWS, no buckets, no servers. Sessions stay on your laptops; we run the thin sync layer in between.</p>
+                    <h3 style="color: #fff; font-size: 1.1rem;">What actually leaves the machine?</h3>
+                    <p style="font-size: 0.875rem;">The question and the answer. The full session transcript never leaves. It stays on the owner's laptop and their Claude reads it right there.</p>
                 </div>
                 <div class="card">
-                    <h3 style="color: #fff; font-size: 1.1rem;">Is there an audit log?</h3>
-                    <p style="font-size: 0.875rem;">On the roadmap for the Team/Enterprise tiers.</p>
+                    <h3 style="color: #fff; font-size: 1.1rem;">Do you store anything on a server?</h3>
+                    <p style="font-size: 0.875rem;">There is a small broker we host that passes questions and answers between machines. It does not store your transcripts. It does keep short summaries of decisions people choose to save, so you can still ask when a teammate is offline.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: #fff; font-size: 1.1rem;">What about secrets in a session?</h3>
+                    <p style="font-size: 0.875rem;">Queries are read-only and blocked from reading env and secret files. The answer is written from the rest of the session, so share a session the way you would screen-share it. Deeper redaction is on the roadmap.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: #fff; font-size: 1.1rem;">Does asking interrupt them?</h3>
+                    <p style="font-size: 0.875rem;">Never. It is read-only and async. No ping, their session untouched, their context window unaffected.</p>
                 </div>
             </div>
         </section>
