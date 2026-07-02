@@ -1,4 +1,4 @@
-# teammate-sync
+# teammate-sync by CodeBaton
 
 **Cross-engineer Claude Code context sharing.** Your teammate types
 `/connect <your-handle>` in their Claude Code session. You `/connect <their-handle>`
@@ -166,4 +166,4 @@ MIT — see `pyproject.toml`.
 
 ---
 
-by CodeBaton.
+teammate-sync by CodeBaton.
