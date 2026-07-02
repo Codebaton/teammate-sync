@@ -89,23 +89,41 @@ def _read_json(path: Path) -> dict:
 
 
 def _connected_active(asker: str) -> list[dict]:
-    """Raw active-session dicts the engineer explicitly /connect-ed with THIS
-    asker, newest-active first. This is the consent boundary: a session the
-    engineer never /connect-ed (e.g. a personal project) is NEVER in this list,
-    even if it's the one they're currently typing in. Nothing else is reachable."""
+    """Every session the engineer explicitly /connect-ed with THIS asker,
+    newest-active first. This is the consent boundary: a session the engineer
+    never /connect-ed (e.g. a personal project) is NEVER in this list, even if
+    it's the one they're currently typing in. Nothing else is reachable.
+
+    Source of truth is the shared registry, since that is exactly what /connect
+    writes and what SessionEnd cleans up. The live active-sessions registry
+    (maintained by the heartbeat hook) is used only to ENRICH each entry with a
+    fresh cwd/transcript_path/last_activity. It is NOT a gate: a legitimately
+    /connect-ed session must still be reachable even if the heartbeat hook
+    hasn't recorded it yet, or recorded it under a mismatched id. Gating on the
+    live registry was why a teammate's second concurrent session could vanish."""
     from .backend import SHARED_SESSIONS_FILENAME
     shared = _read_json(_state_dir() / SHARED_SESSIONS_FILENAME).get("sessions", [])
-    connected_ids = {
-        s["session_id"] for s in shared
-        if isinstance(s, dict) and asker in (s.get("recipients") or [])
-    }
-    if not connected_ids:
+    connected = [
+        s for s in shared
+        if isinstance(s, dict) and s.get("session_id")
+        and asker in (s.get("recipients") or [])
+    ]
+    if not connected:
         return []
     active = _read_json(_state_dir() / ACTIVE_SESSIONS_FILENAME).get("sessions", [])
-    candidates = [
-        s for s in active
-        if isinstance(s, dict) and s.get("session_id") in connected_ids
-    ]
+    active_by_id = {
+        s["session_id"]: s for s in active
+        if isinstance(s, dict) and s.get("session_id")
+    }
+    candidates = []
+    for s in connected:
+        live = active_by_id.get(s["session_id"], {})
+        candidates.append({
+            "session_id": s["session_id"],
+            "cwd": live.get("cwd") or s.get("cwd") or "",
+            "transcript_path": live.get("transcript_path") or s.get("transcript_path"),
+            "last_activity_epoch": live.get("last_activity_epoch") or 0,
+        })
     candidates.sort(key=lambda s: s.get("last_activity_epoch") or 0, reverse=True)
     return candidates
 

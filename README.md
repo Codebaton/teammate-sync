@@ -163,3 +163,7 @@ directed sharing with explicit consent is the privacy model; there is no
 ## License
 
 MIT — see `pyproject.toml`.
+
+---
+
+by CodeBaton.

@@ -37,6 +37,25 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _lookup_transcript_path(session_id: str) -> str | None:
+    """Read this session's transcript path from the live active-sessions
+    registry (the heartbeat hook records it on SessionStart). The session is
+    live when /connect runs, so this is present; we snapshot it into the share
+    entry so the answer path stays independent of the live registry later."""
+    from .backend import ACTIVE_SESSIONS_FILENAME
+    active_file = TARGET_FILE.parent / ACTIVE_SESSIONS_FILENAME
+    if not active_file.exists():
+        return None
+    try:
+        data = json.loads(active_file.read_text())
+    except (json.JSONDecodeError, OSError):
+        return None
+    for s in data.get("sessions", []):
+        if isinstance(s, dict) and s.get("session_id") == session_id:
+            return s.get("transcript_path")
+    return None
+
+
 def update_registry(modify_fn) -> dict:
     """Load → modify → write back, in place, under exclusive fcntl lock."""
     TARGET_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -183,6 +202,11 @@ def cmd_share(recipients: list[str]) -> int:
             except Exception as e:
                 conn_results[peer] = f"err: {e}"
 
+    # Capture the transcript path now, while the session is live in the active
+    # registry, so answering later never depends on the heartbeat hook having
+    # kept this session there (see _connected_active).
+    transcript_path = _lookup_transcript_path(sid)
+
     # Update the local registry.
     def mod(state: dict) -> dict:
         sessions = state.get("sessions", [])
@@ -191,6 +215,7 @@ def cmd_share(recipients: list[str]) -> int:
         sessions.append({
             "session_id": sid,
             "cwd": cwd,
+            "transcript_path": transcript_path,
             "shared_at": now_iso(),
             "recipients": recipients,
         })
