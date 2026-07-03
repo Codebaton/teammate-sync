@@ -1,16 +1,28 @@
 """
 Automatic Claude authorization via in-app OAuth (localhost redirect).
 
-`claude setup-token` is an out-of-band paste flow (Anthropic shows a code you
-must copy back), so it can't be automated. Instead we drive the same OAuth
-ourselves — the way Claude Code's interactive /login does — pointing the
-redirect at OUR localhost server so we catch the code automatically: browser
-opens -> user authorizes -> redirect to localhost -> we exchange the code for
-the long-lived token. No paste, no terminal.
+Why not just shell out to `claude setup-token`? That command runs its own
+interactive flow, catches the redirect itself, and prints the resulting token
+to stdout for the user to copy. (It is NOT a paste-a-code-back flow; nothing is
+pasted in.) Using it from CodeBaton would mean pushing the user into a terminal
+to run it and then scraping the token out of its output. Instead we run the
+same OAuth handshake ourselves so the app can trigger it directly and capture
+the token in-process: no terminal command, no stdout scraping.
 
-Params are Claude Code's public OAuth client (observed from `claude
-setup-token`'s own authorize URL). Endpoints can shift between Claude versions,
-so token exchange tries several known hosts and everything is logged.
+How it works: Claude Code's OAuth client is a public PKCE client, so its
+client_id is not a secret (it is right there in the authorize URL that
+setup-token and /login open) and no client secret is needed to finish the
+exchange. We reuse that client_id but point redirect_uri at our OWN loopback
+server on a free 127.0.0.1 port, which OAuth's native-app rules allow. So the
+auth code is delivered to us instead of to Claude Code's CLI. Flow: browser
+opens -> user authorizes -> redirect to our localhost -> we exchange the code
+(with our PKCE verifier) for the long-lived token.
+
+The token host has moved across Claude versions (console.anthropic.com ->
+platform.claude.com -> claude.com), so the exchange tries the known hosts in
+order. These are undocumented endpoints and a public client_id we do not own,
+so Anthropic could change either and break this. Everything is logged to
+setup-token.log to make that visible.
 """
 
 import base64
