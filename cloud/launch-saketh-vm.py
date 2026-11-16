@@ -81,7 +81,7 @@ def teammate_sync_auth_from_file() -> tuple[str, str, str]:
             f"Missing {auth_path}. Run `./teammate-sync init` on your Mac first."
         )
     data = json.loads(auth_path.read_text())
-    return data["token"], data["org"], data.get("backend_url", "https://teammate-sync-backend.fly.dev")
+    return data["token"], data["org"], data.get("backend_url", "https://d3ds63qsxh9bbh.cloudfront.net")
 
 
 def ensure_ssh_key(lightsail) -> None:

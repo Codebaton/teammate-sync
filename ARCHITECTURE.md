@@ -388,7 +388,7 @@ This is the highest-magic moment of the product. Walking it end-to-end.
   Inside the MCP server:
       auth = read_auth()
       backend = HTTPBackend(
-          backend_url = auth.backend_url,           # https://teammate-sync-backend.fly.dev
+          backend_url = auth.backend_url,           # https://d3ds63qsxh9bbh.cloudfront.net
           token       = auth.token,                 # Alice's GitHub OAuth token
           org         = auth.org,                   # "Incent-AI"
           teammate    = "saketh",                   # the QUERIED engineer
@@ -686,4 +686,4 @@ Live URLs:
 - PyPI: https://pypi.org/project/teammate-sync/
 - Source: https://github.com/codebaton/teammate-sync
 - Landing: https://codebaton.github.io/teammate-sync/
-- Backend: https://teammate-sync-backend.fly.dev/health
+- Backend: https://d3ds63qsxh9bbh.cloudfront.net/health

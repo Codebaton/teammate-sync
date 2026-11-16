@@ -5,6 +5,16 @@ identity + GitHub-org-based teammate list, and (Phase 4b) mints scoped
 AWS STS credentials so each engineer's daemon can only write to their own
 S3 prefix.
 
+## Where it runs now (2026-11-16)
+
+AWS account 945697023314 (profile `turgon`), ap-southeast-1.
+- EC2 `codebaton-backend` (i-0798869edcb35ee00, t4g.nano, EIP 13.228.224.102), no Docker: venv at `/opt/codebaton/venv`, repo at `/opt/codebaton/repo`, env in `/opt/codebaton/.env`, systemd unit `codebaton`.
+- SQLite at `/data/teammate.db` on the root volume.
+- HTTPS via CloudFront E2YTEAE5073X5E -> `https://d3ds63qsxh9bbh.cloudfront.net` (origin http:8000, caching disabled, SG only allows CloudFront prefix list + SSH).
+- Deploy: `ssh -i ~/.ssh/codebaton.pem ec2-user@13.228.224.102 'cd /opt/codebaton/repo && git pull && sudo systemctl restart codebaton'`
+
+The Fly.io sections below are historical.
+
 ## Phase 4a — what's done
 
 - ✅ FastAPI skeleton (`main.py`) with 7 endpoints
@@ -26,8 +36,8 @@ These can't be automated — they require web UI clicks on GitHub + Fly.io.
 2. Click **"New OAuth App"**
 3. Fill in:
    - **Application name:** `teammate-sync` (anything)
-   - **Homepage URL:** `https://teammate-sync-backend.fly.dev` (placeholder — update after deploy)
-   - **Authorization callback URL:** `https://teammate-sync-backend.fly.dev/auth/github/callback` (same — update after deploy)
+   - **Homepage URL:** `https://d3ds63qsxh9bbh.cloudfront.net` (placeholder — update after deploy)
+   - **Authorization callback URL:** `https://d3ds63qsxh9bbh.cloudfront.net/auth/github/callback` (same — update after deploy)
 4. Click **"Register application"**
 5. On the next page:
    - Copy the **Client ID** — you'll need it

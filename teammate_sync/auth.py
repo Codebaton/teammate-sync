@@ -6,7 +6,7 @@ Format:
     {
       "token":         "gho_...",                   # GitHub OAuth access token
       "org":           "SolarCheckr",               # workspace = GitHub org name
-      "backend_url":   "https://teammate-sync-backend.fly.dev",
+      "backend_url":   "https://d3ds63qsxh9bbh.cloudfront.net",
       "anthropic_key": "sk-ant-..."                 # for MCP server's synthesis calls
     }
 """
@@ -16,7 +16,8 @@ from pathlib import Path
 
 
 DEFAULT_AUTH_FILE = "~/.teammate-sync/auth.json"
-DEFAULT_BACKEND_URL = "https://teammate-sync-backend.fly.dev"
+DEFAULT_BACKEND_URL = "https://d3ds63qsxh9bbh.cloudfront.net"
+_RETIRED_BACKEND_URL = "https://teammate-sync-backend.fly.dev"  # Fly.io, shut down 2026-11; moved to AWS
 
 
 def auth_file_path() -> Path:
@@ -98,6 +99,8 @@ def read_auth() -> dict:
     for required in ("token", "org"):
         if not data.get(required):
             raise ValueError(f"Auth file {path} missing required field: {required!r}")
+    if data.get("backend_url") == _RETIRED_BACKEND_URL:
+        data["backend_url"] = DEFAULT_BACKEND_URL  # auth.json written before the AWS move
     data.setdefault("backend_url", DEFAULT_BACKEND_URL)
     return data
 
